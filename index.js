@@ -57,10 +57,19 @@ const typeDefs = gql`
         VehicleTypes: [VehicleTypeVerbose]
     }
 
+    type Model {
+        Make_ID: ID!
+        Make_Name: String!
+        Model_ID: ID!
+        Model_Name: String!
+    }
+
     type Query {
         getAllMakes: [Makes]!
         getAllManufacturers: [Manufacturer]!
-        getManufacturerInfo(mfrId: ID, name: String): [ManufacturerVerbose]
+        getManufacturerInfo(mfrId: String, name: String): [ManufacturerVerbose]
+        getMakesForManufacturer(mfrId: String, name: String): [Makes]
+        getModelsForMake(make: String!): [Model]
     }
 `
 

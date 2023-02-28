@@ -1,6 +1,5 @@
 const axios = require("axios");
 const { UserInputError } = require("apollo-server");
-const _ = require("lodash/core");
 
 const externalApiURL = "https://vpic.nhtsa.dot.gov/api";
 
@@ -18,11 +17,11 @@ const resolvers = {
       );
       return res.data["Results"];
     },
-    getManufacturerInfo: async (root, { id, name }) => {
-      if (!id && !name) {
+    getManufacturerInfo: async (root, { mfrId, name }) => {
+      if (!mfrId && !name) {
         throw new UserInputError("Please provide an id or name");
       }
-      if (!id) {
+      if (!mfrId) {
         const res = await axios.get(`
           ${externalApiURL}/vehicles/GetManufacturerDetails/${name}?format=json
         `)
@@ -30,10 +29,33 @@ const resolvers = {
       }
       if (!name) {
         const res = await axios.get(`
-          ${externalApiURL}/vehicles/GetManufacturerDetails/${id}?format=json
+          ${externalApiURL}/vehicles/GetManufacturerDetails/${mfrId}?format=json
         `)
         return res.data["Results"];
       }
+    },
+    getMakesForManufacturer: async (root, { mfrId, name }) => {
+      if (!mfrId && !name) {
+        throw new UserInputError("Please provide an id or name");
+      }
+      if (!mfrId) {
+        const res = await axios.get(`
+          ${externalApiURL}/vehicles/GetMakeForManufacturer/${name}?format=json
+        `)
+        return res.data["Results"];
+      }
+      if (!name) {
+        const res = await axios.get(`
+          ${externalApiURL}/vehicles/GetMakesForManufacturer/${mfrId}?format=json
+        `)
+        return res.data["Results"];
+      }
+    },
+    getModelsForMake: async (root, { make }) => {
+      const res = await axios.get(`
+        ${externalApiURL}/vehicles/GetModelsForMake/${make}?format=json
+      `)
+      return res.data["Results"];
     },
   },
 };
